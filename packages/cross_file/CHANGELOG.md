@@ -1,6 +1,17 @@
-## NEXT
+## 0.3.3+4
+
+* Reverts an accidental change in a constructor argument's nullability.
+
+## 0.3.3+3
+
+* **RETRACTED**
+* Updates code to fix strict-cast violations.
+* Updates minimum SDK version to Flutter 3.0.
+
+## 0.3.3+2
 
 * Fixes lint warnings in tests.
+* Dartdoc correction for `readAsBytes` and `readAsString`.
 
 ## 0.3.3+1
 

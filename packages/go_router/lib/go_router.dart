@@ -6,12 +6,19 @@
 /// deep linking, data-driven routes and more.
 library go_router;
 
-export 'src/configuration.dart' show GoRoute, GoRouterState;
+export 'src/configuration.dart'
+    show GoRoute, GoRouterState, RouteBase, ShellRoute;
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
-export 'src/misc/refresh_stream.dart';
 export 'src/pages/custom_transition_page.dart';
-export 'src/platform.dart' show UrlPathStrategy;
-export 'src/route_data.dart' show GoRouteData, TypedGoRoute;
+export 'src/route_data.dart'
+    show
+        RouteData,
+        GoRouteData,
+        ShellRouteData,
+        TypedRoute,
+        TypedGoRoute,
+        TypedShellRoute;
 export 'src/router.dart';
-export 'src/typedefs.dart' show GoRouterPageBuilder, GoRouterRedirect;
+export 'src/typedefs.dart'
+    show GoRouterPageBuilder, GoRouterRedirect, GoRouterWidgetBuilder;

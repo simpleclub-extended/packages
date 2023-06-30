@@ -25,10 +25,15 @@ const Set<String> _expectedAnnotatedTests = <String>{
   'AppliedToWrongClassType',
   'BadPathParam',
   'ExtraMustBeOptional',
+  'ExtraValueRoute',
   'MissingPathParam',
   'MissingPathValue',
   'MissingTypeAnnotation',
   'NullableRequiredParam',
   'UnsupportedType',
   'theAnswer',
+  'EnumParam',
+  'DefaultValueRoute',
+  'NullableDefaultValueRoute',
+  'IterableWithEnumRoute'
 };

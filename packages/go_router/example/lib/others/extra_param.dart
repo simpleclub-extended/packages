@@ -2,60 +2,63 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(goderbauer): Refactor the examples to remove this ignore, https://github.com/flutter/flutter/issues/110210
-// ignore_for_file: avoid_dynamic_calls
-
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-final Map<String, dynamic> _families = const JsonDecoder().convert('''
-{
-  "f1": {
-    "name": "Doe",
-    "people": {
-      "p1": {
-        "name": "Jane",
-        "age": 23
-      },
-      "p2": {
-        "name": "John",
-        "age": 6
-      }
-    }
-  },
-  "f2": {
-    "name": "Wong",
-    "people": {
-      "p1": {
-        "name": "June",
-        "age": 51
-      },
-      "p2": {
-        "name": "Xin",
-        "age": 44
-      }
-    }
-  }
+/// Family data class.
+class Family {
+  /// Create a family.
+  const Family({required this.name, required this.people});
+
+  /// The last name of the family.
+  final String name;
+
+  /// The people in the family.
+  final Map<String, Person> people;
 }
-''');
+
+/// Person data class.
+class Person {
+  /// Creates a person.
+  const Person({required this.name, required this.age});
+
+  /// The first name of the person.
+  final String name;
+
+  /// The age of the person.
+  final int age;
+}
+
+const Map<String, Family> _families = <String, Family>{
+  'f1': Family(
+    name: 'Doe',
+    people: <String, Person>{
+      'p1': Person(name: 'Jane', age: 23),
+      'p2': Person(name: 'John', age: 6),
+    },
+  ),
+  'f2': Family(
+    name: 'Wong',
+    people: <String, Person>{
+      'p1': Person(name: 'June', age: 51),
+      'p2': Person(name: 'Xin', age: 44),
+    },
+  ),
+};
 
 void main() => runApp(App());
 
 /// The main app.
 class App extends StatelessWidget {
   /// Creates an [App].
-  App({Key? key}) : super(key: key);
+  App({super.key});
 
   /// The title of the app.
   static const String title = 'GoRouter Example: Extra Parameter';
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        routeInformationProvider: _router.routeInformationProvider,
-        routeInformationParser: _router.routeInformationParser,
-        routerDelegate: _router.routerDelegate,
+        routerConfig: _router,
         title: title,
       );
 
@@ -86,18 +89,18 @@ class App extends StatelessWidget {
 /// The home screen that shows a list of families.
 class HomeScreen extends StatelessWidget {
   /// Creates a [HomeScreen].
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(title: const Text(App.title)),
         body: ListView(
           children: <Widget>[
-            for (final String fid in _families.keys)
+            for (final MapEntry<String, Family> entry in _families.entries)
               ListTile(
-                title: Text(_families[fid]['name']),
-                onTap: () => context
-                    .goNamed('family', extra: <String, String>{'fid': fid}),
+                title: Text(entry.value.name),
+                onTap: () => context.goNamed('family',
+                    extra: <String, String>{'fid': entry.key}),
               )
           ],
         ),
@@ -107,22 +110,21 @@ class HomeScreen extends StatelessWidget {
 /// The screen that shows a list of persons in a family.
 class FamilyScreen extends StatelessWidget {
   /// Creates a [FamilyScreen].
-  const FamilyScreen({required this.fid, Key? key}) : super(key: key);
+  const FamilyScreen({required this.fid, super.key});
 
   /// The family to display.
   final String fid;
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> people =
-        _families[fid]['people'] as Map<String, dynamic>;
+    final Map<String, Person> people = _families[fid]!.people;
     return Scaffold(
-      appBar: AppBar(title: Text(_families[fid]['name'])),
+      appBar: AppBar(title: Text(_families[fid]!.name)),
       body: ListView(
         children: <Widget>[
-          for (final dynamic p in people.values)
+          for (final Person p in people.values)
             ListTile(
-              title: Text(p['name']),
+              title: Text(p.name),
             ),
         ],
       ),

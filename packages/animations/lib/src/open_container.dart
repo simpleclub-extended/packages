@@ -80,7 +80,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
   /// All arguments except for [key] must not be null. The arguments
   /// [openBuilder] and [closedBuilder] are required.
   const OpenContainer({
-    Key? key,
+    super.key,
     this.closedColor = Colors.white,
     this.openColor = Colors.white,
     this.middleColor,
@@ -99,7 +99,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
     this.useRootNavigator = false,
     this.routeSettings,
     this.clipBehavior = Clip.antiAlias,
-  }) : super(key: key);
+  });
 
   /// Background color of the container while it is closed.
   ///
@@ -341,9 +341,9 @@ class _OpenContainerState<T> extends State<OpenContainer<T?>> {
 ///    `isVisible` is ignored).
 class _Hideable extends StatefulWidget {
   const _Hideable({
-    Key? key,
+    super.key,
     required this.child,
-  }) : super(key: key);
+  });
 
   final Widget child;
 
@@ -389,8 +389,11 @@ class _HideableState extends State<_Hideable> {
     if (_placeholderSize != null) {
       return SizedBox.fromSize(size: _placeholderSize);
     }
-    return Opacity(
-      opacity: _visible ? 1.0 : 0.0,
+    return Visibility(
+      visible: _visible,
+      maintainSize: true,
+      maintainState: true,
+      maintainAnimation: true,
       child: widget.child,
     );
   }
@@ -819,9 +822,9 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
                               child: (hideableKey.currentState?.isInTree ??
                                       false)
                                   ? null
-                                  : Opacity(
+                                  : FadeTransition(
                                       opacity: closedOpacityTween!
-                                          .evaluate(animation),
+                                          .animate(animation),
                                       child: Builder(
                                         key: closedBuilderKey,
                                         builder: (BuildContext context) {
@@ -841,8 +844,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
                             child: SizedBox(
                               width: _rectTween.end!.width,
                               height: _rectTween.end!.height,
-                              child: Opacity(
-                                opacity: openOpacityTween!.evaluate(animation),
+                              child: FadeTransition(
+                                opacity: openOpacityTween!.animate(animation),
                                 child: Builder(
                                   key: _openBuilderKey,
                                   builder: (BuildContext context) {

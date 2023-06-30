@@ -10,16 +10,14 @@ void main() => runApp(App());
 /// The main app.
 class App extends StatelessWidget {
   /// Creates an [App].
-  App({Key? key}) : super(key: key);
+  App({super.key});
 
   /// The title of the app.
   static const String title = 'GoRouter Example: Custom Error Screen';
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        routeInformationProvider: _router.routeInformationProvider,
-        routeInformationParser: _router.routeInformationParser,
-        routerDelegate: _router.routerDelegate,
+        routerConfig: _router,
         title: title,
       );
 
@@ -44,7 +42,7 @@ class App extends StatelessWidget {
 /// The screen of the first page.
 class Page1Screen extends StatelessWidget {
   /// Creates a [Page1Screen].
-  const Page1Screen({Key? key}) : super(key: key);
+  const Page1Screen({super.key});
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -66,7 +64,7 @@ class Page1Screen extends StatelessWidget {
 /// The screen of the second page.
 class Page2Screen extends StatelessWidget {
   /// Creates a [Page2Screen].
-  const Page2Screen({Key? key}) : super(key: key);
+  const Page2Screen({super.key});
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -88,7 +86,7 @@ class Page2Screen extends StatelessWidget {
 /// The screen of the error page.
 class ErrorScreen extends StatelessWidget {
   /// Creates an [ErrorScreen].
-  const ErrorScreen(this.error, {Key? key}) : super(key: key);
+  const ErrorScreen(this.error, {super.key});
 
   /// The error to display.
   final Exception error;

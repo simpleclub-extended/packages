@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(goderbauer): Refactor the examples to remove this ignore, https://github.com/flutter/flutter/issues/110210
-// ignore_for_file: avoid_dynamic_calls
-
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,43 +13,53 @@ import 'package:go_router/go_router.dart';
 //
 // The query parameters are automatically stored in GoRouterState.queryParams.
 
-final Map<String, dynamic> _families = const JsonDecoder().convert('''
-{
-  "f1": {
-    "name": "Doe",
-    "people": {
-      "p1": {
-        "name": "Jane",
-        "age": 23
-      },
-      "p2": {
-        "name": "John",
-        "age": 6
-      }
-    }
-  },
-  "f2": {
-    "name": "Wong",
-    "people": {
-      "p1": {
-        "name": "June",
-        "age": 51
-      },
-      "p2": {
-        "name": "Xin",
-        "age": 44
-      }
-    }
-  }
+/// Family data class.
+class Family {
+  /// Create a family.
+  const Family({required this.name, required this.people});
+
+  /// The last name of the family.
+  final String name;
+
+  /// The people in the family.
+  final Map<String, Person> people;
 }
-''');
+
+/// Person data class.
+class Person {
+  /// Creates a person.
+  const Person({required this.name, required this.age});
+
+  /// The first name of the person.
+  final String name;
+
+  /// The age of the person.
+  final int age;
+}
+
+const Map<String, Family> _families = <String, Family>{
+  'f1': Family(
+    name: 'Doe',
+    people: <String, Person>{
+      'p1': Person(name: 'Jane', age: 23),
+      'p2': Person(name: 'John', age: 6),
+    },
+  ),
+  'f2': Family(
+    name: 'Wong',
+    people: <String, Person>{
+      'p1': Person(name: 'June', age: 51),
+      'p2': Person(name: 'Xin', age: 44),
+    },
+  ),
+};
 
 void main() => runApp(App());
 
 /// The main app.
 class App extends StatelessWidget {
   /// Creates an [App].
-  App({Key? key}) : super(key: key);
+  App({super.key});
 
   /// The title of the app.
   static const String title = 'GoRouter Example: Query Parameters';
@@ -62,9 +67,7 @@ class App extends StatelessWidget {
   // add the login info into the tree as app state that can change over time
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        routeInformationProvider: _router.routeInformationProvider,
-        routeInformationParser: _router.routeInformationParser,
-        routerDelegate: _router.routerDelegate,
+        routerConfig: _router,
         title: title,
         debugShowCheckedModeBanner: false,
       );
@@ -94,7 +97,7 @@ class App extends StatelessWidget {
 /// The home screen that shows a list of families.
 class HomeScreen extends StatelessWidget {
   /// Creates a [HomeScreen].
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -104,10 +107,10 @@ class HomeScreen extends StatelessWidget {
       ),
       body: ListView(
         children: <Widget>[
-          for (final String fid in _families.keys)
+          for (final MapEntry<String, Family> entry in _families.entries)
             ListTile(
-              title: Text(_families[fid]['name']),
-              onTap: () => context.go('/family/$fid'),
+              title: Text(entry.value.name),
+              onTap: () => context.go('/family/${entry.key}'),
             )
         ],
       ),
@@ -118,8 +121,7 @@ class HomeScreen extends StatelessWidget {
 /// The screen that shows a list of persons in a family.
 class FamilyScreen extends StatelessWidget {
   /// Creates a [FamilyScreen].
-  const FamilyScreen({required this.fid, required this.asc, Key? key})
-      : super(key: key);
+  const FamilyScreen({required this.fid, required this.asc, super.key});
 
   /// The family to display.
   final String fid;
@@ -130,9 +132,10 @@ class FamilyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> newQueries;
-    final List<String> names = _families[fid]['people']
+    final List<String> names = _families[fid]!
+        .people
         .values
-        .map<String>((dynamic p) => p['name'] as String)
+        .map<String>((Person p) => p.name)
         .toList();
     names.sort();
     if (asc) {
@@ -142,7 +145,7 @@ class FamilyScreen extends StatelessWidget {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text(_families[fid]['name']),
+        title: Text(_families[fid]!.name),
         actions: <Widget>[
           IconButton(
             onPressed: () => context.goNamed('family',

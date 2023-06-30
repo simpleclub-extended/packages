@@ -14,6 +14,53 @@ enum PersonDetails {
   favoriteSport,
 }
 
+enum SportDetails {
+  volleyball(
+    imageUrl: '/sportdetails/url/volleyball.jpg',
+    playerPerTeam: 6,
+    accessory: null,
+    hasNet: true,
+  ),
+  football(
+    imageUrl: '/sportdetails/url/Football.jpg',
+    playerPerTeam: 11,
+    accessory: null,
+    hasNet: true,
+  ),
+  tennis(
+    imageUrl: '/sportdetails/url/tennis.jpg',
+    playerPerTeam: 2,
+    accessory: 'Rackets',
+    hasNet: true,
+  ),
+  hockey(
+    imageUrl: '/sportdetails/url/hockey.jpg',
+    playerPerTeam: 6,
+    accessory: 'Hockey sticks',
+    hasNet: true,
+  ),
+  ;
+
+  const SportDetails({
+    required this.accessory,
+    required this.hasNet,
+    required this.imageUrl,
+    required this.playerPerTeam,
+  });
+
+  final String imageUrl;
+  final int playerPerTeam;
+  final String? accessory;
+  final bool hasNet;
+}
+
+/// An enum used only in iterables.
+enum CookingRecipe {
+  burger,
+  pizza,
+  tacos,
+}
+
 /// sample Person class
 class Person {
   Person({

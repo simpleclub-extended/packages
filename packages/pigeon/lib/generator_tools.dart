@@ -8,8 +8,10 @@ import 'dart:mirrors';
 
 import 'ast.dart';
 
-/// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '4.0.3';
+/// The current version of pigeon.
+///
+/// This must match the version in pubspec.yaml.
+const String pigeonVersion = '9.0.6';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -81,15 +83,18 @@ class Indent {
     }
   }
 
-  /// Scoped increase of the ident level.  For the execution of [func] the
-  /// indentation will be incremented.
-  void scoped(
+  /// Scoped increase of the indent level.
+  ///
+  /// For the execution of [func] the indentation will be incremented.
+  void addScoped(
     String? begin,
     String? end,
     Function func, {
     bool addTrailingNewline = true,
     int nestCount = 1,
   }) {
+    assert(begin != '' || end != '',
+        'Use nest for indentation without any decoration');
     if (begin != null) {
       _sink.write(begin + newline);
     }
@@ -102,19 +107,22 @@ class Indent {
     }
   }
 
-  /// Like `scoped` but writes the current indentation level.
+  /// Like `addScoped` but writes the current indentation level.
   void writeScoped(
     String? begin,
     String end,
     Function func, {
     bool addTrailingNewline = true,
   }) {
-    scoped(str() + (begin ?? ''), end, func,
+    assert(begin != '' || end != '',
+        'Use nest for indentation without any decoration');
+    addScoped(str() + (begin ?? ''), end, func,
         addTrailingNewline: addTrailingNewline);
   }
 
-  /// Scoped increase of the ident level.  For the execution of [func] the
-  /// indentation will be incremented by the given amount.
+  /// Scoped increase of the indent level.
+  ///
+  /// For the execution of [func] the indentation will be incremented by the given amount.
   void nest(int count, Function func) {
     inc(count);
     func(); // ignore: avoid_dynamic_calls
@@ -143,6 +151,13 @@ class Indent {
   /// Just adds [text].
   void add(String text) {
     _sink.write(text);
+  }
+
+  /// Adds [lines] number of newlines.
+  void newln([int lines = 1]) {
+    for (; lines > 0; lines--) {
+      _sink.write(newline);
+    }
   }
 }
 
@@ -263,9 +278,10 @@ void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
   }
 }
 
-/// Recursively merges [modification] into [base].  In other words, whenever
-/// there is a conflict over the value of a key path, [modification]'s value for
-/// that key path is selected.
+/// Recursively merges [modification] into [base].
+///
+/// In other words, whenever there is a conflict over the value of a key path,
+/// [modification]'s value for that key path is selected.
 Map<String, Object> mergeMaps(
   Map<String, Object> base,
   Map<String, Object> modification,
@@ -432,3 +448,94 @@ Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
 /// Returns true if the [TypeDeclaration] represents an enum.
 bool isEnum(Root root, TypeDeclaration type) =>
     root.enums.map((Enum e) => e.name).contains(type.baseName);
+
+/// Describes how to format a document comment.
+class DocumentCommentSpecification {
+  /// Constructor for [DocumentationCommentSpecification]
+  const DocumentCommentSpecification(
+    this.openCommentToken, {
+    this.closeCommentToken = '',
+    this.blockContinuationToken = '',
+  });
+
+  /// Token that represents the open symbol for a documentation comment.
+  final String openCommentToken;
+
+  /// Token that represents the closing symbol for a documentation comment.
+  final String closeCommentToken;
+
+  /// Token that represents the continuation symbol for a block of documentation comments.
+  final String blockContinuationToken;
+}
+
+/// Formats documentation comments and adds them to current Indent.
+///
+/// The [comments] list is meant for comments written in the input dart file.
+/// The [generatorComments] list is meant for comments added by the generators.
+/// Include white space for all tokens when called, no assumptions are made.
+void addDocumentationComments(
+  Indent indent,
+  List<String> comments,
+  DocumentCommentSpecification commentSpec, {
+  List<String> generatorComments = const <String>[],
+}) {
+  final List<String> allComments = <String>[
+    ...comments,
+    if (comments.isNotEmpty && generatorComments.isNotEmpty) '',
+    ...generatorComments,
+  ];
+  String currentLineOpenToken = commentSpec.openCommentToken;
+  if (allComments.length > 1) {
+    if (commentSpec.closeCommentToken != '') {
+      indent.writeln(commentSpec.openCommentToken);
+      currentLineOpenToken = commentSpec.blockContinuationToken;
+    }
+    for (String line in allComments) {
+      if (line.isNotEmpty && line[0] != ' ') {
+        line = ' $line';
+      }
+      indent.writeln(
+        '$currentLineOpenToken$line',
+      );
+    }
+    if (commentSpec.closeCommentToken != '') {
+      indent.writeln(commentSpec.closeCommentToken);
+    }
+  } else if (allComments.length == 1) {
+    indent.writeln(
+      '$currentLineOpenToken${allComments.first}${commentSpec.closeCommentToken}',
+    );
+  }
+}
+
+/// Returns an ordered list of fields to provide consistent serialisation order.
+Iterable<NamedType> getFieldsInSerializationOrder(Class klass) {
+  // This returns the fields in the order they are declared in the pigeon file.
+  return klass.fields;
+}
+
+/// Enum to specify which file will be generated for multi-file generators
+enum FileType {
+  /// header file.
+  header,
+
+  /// source file.
+  source,
+
+  /// file type is not applicable.
+  na,
+}
+
+/// Options for [Generator]s that have multiple output file types.
+///
+/// Specifies which file to write as well as wraps all language options.
+class OutputFileOptions<T> {
+  /// Constructor.
+  OutputFileOptions({required this.fileType, required this.languageOptions});
+
+  /// To specify which file type should be created.
+  FileType fileType;
+
+  /// Options for specified language across all file types.
+  T languageOptions;
+}

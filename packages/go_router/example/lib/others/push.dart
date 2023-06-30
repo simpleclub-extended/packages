@@ -10,16 +10,14 @@ void main() => runApp(App());
 /// The main app.
 class App extends StatelessWidget {
   /// Creates an [App].
-  App({Key? key}) : super(key: key);
+  App({super.key});
 
   /// The title of the app.
   static const String title = 'GoRouter Example: Push';
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        routeInformationProvider: _router.routeInformationProvider,
-        routeInformationParser: _router.routeInformationParser,
-        routerDelegate: _router.routerDelegate,
+        routerConfig: _router,
         title: title,
       );
 
@@ -44,7 +42,7 @@ class App extends StatelessWidget {
 /// The screen of the first page.
 class Page1ScreenWithPush extends StatelessWidget {
   /// Creates a [Page1ScreenWithPush].
-  const Page1ScreenWithPush({Key? key}) : super(key: key);
+  const Page1ScreenWithPush({super.key});
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -66,7 +64,7 @@ class Page1ScreenWithPush extends StatelessWidget {
 /// The screen of the second page.
 class Page2ScreenWithPush extends StatelessWidget {
   /// Creates a [Page2ScreenWithPush].
-  const Page2ScreenWithPush(this.pushCount, {Key? key}) : super(key: key);
+  const Page2ScreenWithPush(this.pushCount, {super.key});
 
   /// The push count.
   final int pushCount;

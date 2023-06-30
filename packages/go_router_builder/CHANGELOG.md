@@ -1,6 +1,61 @@
+## 1.1.6
+
+* Generates the const enum map for enums used in `List`, `Set` and `Iterable`.
+
+## 1.1.5
+
+* Replaces unnecessary Flutter SDK constraint with corresponding Dart
+  SDK constraint.
+
+## 1.1.4
+
+* Fixes the example for the default values in the README.
+
+## 1.1.3
+
+* Updates router_config to not passing itself as `extra`.
+
+## 1.1.2
+
+* Adds support for Iterables, Lists and Sets in query params for TypedGoRoute. [#108437](https://github.com/flutter/flutter/issues/108437).
+
+## 1.1.1
+
+* Support for the generation of the pushReplacement method has been added.
+
+## 1.1.0
+
+* Supports default value for the route parameters.
+
+## 1.0.16
+
+* Update the documentation to go_router v6.0.0.
+* Bumps go_router version in example folder to v6.0.0.
+
+## 1.0.15
+
+* Avoids using deprecated DartType.element2.
+
+## 1.0.14
+
+* Bumps go_router version in example folder to v5.0.0.
+* Bumps flutter version to 3.3.0.
+
+## 1.0.13
+
+* Supports the latest `package:analyzer`.
+
+## 1.0.12
+
+* Adds support for enhanced enums. [#105876](https://github.com/flutter/flutter/issues/105876).
+
+## 1.0.11
+
+* Replace mentions of the deprecated `GoRouteData.buildPage` with `GoRouteData.buildPageWithState`.
+
 ## 1.0.10
 
-* Adds a lint ignore for deprecated member in the example. 
+* Adds a lint ignore for deprecated member in the example.
 
 ## 1.0.9
 

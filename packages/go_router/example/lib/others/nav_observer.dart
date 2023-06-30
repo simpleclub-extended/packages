@@ -11,16 +11,14 @@ void main() => runApp(App());
 /// The main app.
 class App extends StatelessWidget {
   /// Creates an [App].
-  App({Key? key}) : super(key: key);
+  App({super.key});
 
   /// The title of the app.
   static const String title = 'GoRouter Example: Navigator Observer';
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        routeInformationProvider: _router.routeInformationProvider,
-        routeInformationParser: _router.routeInformationParser,
-        routerDelegate: _router.routerDelegate,
+        routerConfig: _router,
         title: title,
       );
 
@@ -98,7 +96,7 @@ extension on Route<dynamic> {
 /// The screen of the first page.
 class Page1Screen extends StatelessWidget {
   /// Creates a [Page1Screen].
-  const Page1Screen({Key? key}) : super(key: key);
+  const Page1Screen({super.key});
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -124,7 +122,7 @@ class Page1Screen extends StatelessWidget {
 /// The screen of the second page.
 class Page2Screen extends StatelessWidget {
   /// Creates a [Page2Screen].
-  const Page2Screen({Key? key}) : super(key: key);
+  const Page2Screen({super.key});
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -149,7 +147,7 @@ class Page2Screen extends StatelessWidget {
 /// The screen of the third page.
 class Page3Screen extends StatelessWidget {
   /// Creates a [Page3Screen].
-  const Page3Screen({Key? key}) : super(key: key);
+  const Page3Screen({super.key});
 
   @override
   Widget build(BuildContext context) => Scaffold(

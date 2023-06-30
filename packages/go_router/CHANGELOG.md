@@ -1,3 +1,185 @@
+## NEXT
+
+- Aligns Dart and Flutter SDK constraints.
+- Updates compileSdkVersion to 33.
+- Updates example app to iOS 11.
+
+## 6.2.0
+
+- Export supertypes in route_data.dart library
+
+## 6.1.0
+
+- Adds `GoRouter.maybeOf` to get the closest `GoRouter` from the context, if there is any.
+
+## 6.0.10
+
+- Adds helpers for go_router_builder for ShellRoute support
+
+## 6.0.9
+
+- Fixes deprecation message for `GoRouterState.namedLocation`
+
+## 6.0.8
+
+* Adds support for Iterables, Lists and Sets in query params for TypedGoRoute. [#108437](https://github.com/flutter/flutter/issues/108437).
+
+## 6.0.7
+
+- Add observers parameter to the ShellRoute that will be passed to the nested Navigator.
+- Use `HeroControllerScope` for nested Navigator that fixes Hero Widgets not animating in Nested Navigator.
+
+## 6.0.6
+
+- Adds `reverseTransitionDuration` to `CustomTransitionPage`
+
+## 6.0.5
+
+- Fixes [unnecessary_null_comparison](https://dart-lang.github.io/linter/lints/unnecessary_null_checks.html) lint warnings.
+
+## 6.0.4
+
+- Fixes redirection info log.
+
+## 6.0.3
+
+- Makes `CustomTransitionPage.barrierDismissible` work
+
+## 6.0.2
+
+- Fixes missing result on pop in go_router extension.
+
+## 6.0.1
+
+- Fixes crashes when popping navigators manually.
+- Fixes trailing slashes after pops.
+
+## 6.0.0
+
+- **BREAKING CHANGE**
+  - `GoRouteData`'s `redirect` now takes 2 parameters `BuildContext context, GoRouterState state`.
+  - `GoRouteData`'s `build` now takes 2 parameters `BuildContext context, GoRouterState state`.
+  - `GoRouteData`'s `buildPageWithState` has been removed and replaced by `buildPage` with now takes 2 parameters `BuildContext context, GoRouterState state`.
+  - `replace` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacement`.
+  - `replaceNamed` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacementNamed`.
+  - [go_router v6 migration guide](https://flutter.dev/go/go-router-v6-breaking-changes)
+
+## 5.2.4
+
+- Fixes crashes when using async redirect.
+
+## 5.2.3
+
+- Fixes link for router configuration and sub-routes
+
+## 5.2.2
+
+- Fixes `pop` and `push` to update urls correctly.
+
+## 5.2.1
+
+- Refactors `GoRouter.pop` to be able to pop individual pageless route with result.
+
+## 5.2.0
+
+- Fixes `GoRouterState.location` and `GoRouterState.param` to return correct value.
+- Cleans up `RouteMatch` and `RouteMatchList` API.
+
+## 5.1.10
+
+- Fixes link of ShellRoute in README.
+
+## 5.1.9
+
+- Fixes broken links in documentation.
+
+## 5.1.8
+
+- Fixes a bug with `replace` where it was not generated a new `pageKey`.
+
+## 5.1.7
+
+- Adds documentation using dartdoc topics.
+
+## 5.1.6
+
+- Fixes crashes when multiple `GoRoute`s use the same `parentNavigatorKey` in a route subtree.
+
+## 5.1.5
+
+- Adds migration guide for 5.1.2 to readme.
+
+## 5.1.4
+
+- Fixes the documentation by removing the `ShellRoute`'s non-existing `path` parameter from it.
+
+## 5.1.3
+
+- Allows redirection to return same location.
+
+## 5.1.2
+
+- Adds GoRouterState to context.
+- Fixes GoRouter notification.
+- Updates README.
+- Removes dynamic calls in examples.
+- **BREAKING CHANGE**
+  - Remove NavigatorObserver mixin from GoRouter
+
+## 5.1.1
+
+- Removes DebugGoRouteInformation.
+
+## 5.1.0
+
+- Removes urlPathStrategy completely, which should have been done in v5.0.0 but some code remained mistakenly.
+
+## 5.0.5
+
+- Fixes issue where asserts in popRoute were preventing the app from
+  exiting on Android.
+
+## 5.0.4
+
+- Fixes a bug in ShellRoute example where NavigationBar might lose current index in a nested routes.
+
+## 5.0.3
+
+- Changes examples to use the routerConfig API
+
+## 5.0.2
+
+- Fixes missing code example in ShellRoute documentation.
+
+## 5.0.1
+
+- Allows ShellRoute to have child ShellRoutes (flutter/flutter#111981)
+
+## 5.0.0
+
+- Fixes a bug where intermediate route redirect methods are not called.
+- GoRouter implements the RouterConfig interface, allowing you to call
+  MaterialApp.router(routerConfig: _myGoRouter) instead of passing
+  the RouterDelegate, RouteInformationParser, and RouteInformationProvider
+  fields.
+- **BREAKING CHANGE**
+  - Redesigns redirection API, adds asynchronous feature, and adds build context to redirect.
+  - Removes GoRouterRefreshStream
+  - Removes navigatorBuilder
+  - Removes urlPathStrategy
+- [go_router v5 migration guide](https://flutter.dev/go/go-router-v5-breaking-changes)
+
+## 4.5.1
+
+- Fixes an issue where GoRoutes with only a redirect were disallowed
+  (flutter/flutter#111763)
+
+## 4.5.0
+
+- Adds ShellRoute for nested navigation support (flutter/flutter#99126)
+- Adds `parentNavigatorKey` to GoRoute, which specifies the Navigator to place that
+  route's Page onto.
+
 ## 4.4.1
 
 - Fix an issue where disabling logging clears the root logger's listeners
@@ -9,7 +191,7 @@
 
 ## 4.3.0
 
-- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`. 
+- Allows `Map<String, dynamic>` maps as `queryParams` of `goNamed`, `replacedName`, `pushNamed` and `namedLocation`.
 
 ## 4.2.9
 

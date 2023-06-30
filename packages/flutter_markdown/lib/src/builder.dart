@@ -393,12 +393,13 @@ class MarkdownBuilder implements md.NodeVisitor {
           Widget bullet;
           final dynamic el = element.children![0];
           if (el is md.Element && el.attributes['type'] == 'checkbox') {
-            final bool val = el.attributes['checked'] != 'false';
+            final bool val = el.attributes.containsKey('checked');
             bullet = _buildCheckbox(val);
           } else {
             bullet = _buildBullet(_listIndents.last);
           }
           child = Row(
+            mainAxisSize: fitContent ? MainAxisSize.min : MainAxisSize.max,
             textBaseline: listItemCrossAxisAlignment ==
                     MarkdownListItemCrossAxisAlignment.start
                 ? null
@@ -414,7 +415,10 @@ class MarkdownBuilder implements md.NodeVisitor {
                     styleSheet.listBulletPadding!.right,
                 child: bullet,
               ),
-              Expanded(child: child)
+              Flexible(
+                fit: fitContent ? FlexFit.loose : FlexFit.tight,
+                child: child,
+              )
             ],
           );
         }
@@ -477,13 +481,11 @@ class MarkdownBuilder implements md.NodeVisitor {
         current.children.add(_buildRichText(const TextSpan(text: '\n')));
       } else if (tag == 'th' || tag == 'td') {
         TextAlign? align;
-        final String? style = element.attributes['style'];
-        if (style == null) {
+        final String? alignAttribute = element.attributes['align'];
+        if (alignAttribute == null) {
           align = tag == 'th' ? styleSheet.tableHeadAlign : TextAlign.left;
         } else {
-          final RegExp regExp = RegExp(r'text-align: (left|center|right)');
-          final Match match = regExp.matchAsPrefix(style)!;
-          switch (match[1]) {
+          switch (alignAttribute) {
             case 'left':
               align = TextAlign.left;
               break;
@@ -499,7 +501,7 @@ class MarkdownBuilder implements md.NodeVisitor {
           _mergeInlineChildren(current.children, align),
           textAlign: align,
         );
-        _tables.single.rows.last.children!.add(child);
+        _ambiguate(_tables.single.rows.last.children)!.add(child);
       } else if (tag == 'a') {
         _linkHandlers.removeLast();
       }
@@ -848,4 +850,10 @@ class MarkdownBuilder implements md.NodeVisitor {
       );
     }
   }
+
+  /// This allows a value of type T or T? to be treated as a value of type T?.
+  ///
+  /// We use this so that APIs that have become non-nullable can still be used
+  /// with `!` and `?` on the stable branch.
+  T? _ambiguate<T>(T? value) => value;
 }

@@ -14,6 +14,17 @@ final TextTheme textTheme = Typography.material2018()
     .black
     .merge(const TextTheme(bodyMedium: TextStyle(fontSize: 12.0)));
 
+Iterable<Widget> selfAndDescendantWidgetsOf(Finder start, WidgetTester tester) {
+  final Element startElement = tester.element(start);
+  final Iterable<Widget> descendants =
+      collectAllElementsFrom(startElement, skipOffstage: false)
+          .map((Element e) => e.widget);
+  return <Widget>[
+    startElement.widget,
+    ...descendants,
+  ];
+}
+
 void expectWidgetTypes(Iterable<Widget> widgets, List<Type> expected) {
   final List<Type> actual = widgets.map((Widget w) => w.runtimeType).toList();
   expect(actual, expected);
@@ -142,7 +153,7 @@ void expectTableSize(int rows, int columns) {
 
   expect(table.children.length, rows);
   for (int index = 0; index < rows; index++) {
-    expect(table.children[index].children!.length, columns);
+    expect(_ambiguate(table.children[index].children)!.length, columns);
   }
 }
 
@@ -168,14 +179,17 @@ Widget boilerplate(Widget child) {
 }
 
 class TestAssetBundle extends CachingAssetBundle {
-  static const String manifest = r'{"assets/logo.png":["assets/logo.png"]}';
-
   @override
   Future<ByteData> load(String key) async {
     if (key == 'AssetManifest.json') {
+      const String manifest = r'{"assets/logo.png":["assets/logo.png"]}';
       final ByteData asset =
           ByteData.view(utf8.encoder.convert(manifest).buffer);
       return Future<ByteData>.value(asset);
+    } else if (key == 'AssetManifest.bin') {
+      final ByteData manifest = const StandardMessageCodec().encodeMessage(
+          <String, List<Object>>{'assets/logo.png': <Object>[]})!;
+      return Future<ByteData>.value(manifest);
     } else if (key == 'assets/logo.png') {
       // The root directory tests are run from is different for 'flutter test'
       // verses 'flutter test test/*_test.dart'. Adjust the root directory
@@ -197,3 +211,9 @@ class TestAssetBundle extends CachingAssetBundle {
     }
   }
 }
+
+/// This allows a value of type T or T? to be treated as a value of type T?.
+///
+/// We use this so that APIs that have become non-nullable can still be used
+/// with `!` and `?` on the stable branch.
+T? _ambiguate<T>(T? value) => value;

@@ -15,7 +15,7 @@ part 'main.g.dart';
 void main() => runApp(App());
 
 class App extends StatelessWidget {
-  App({Key? key}) : super(key: key);
+  App({super.key});
 
   final LoginInfo loginInfo = LoginInfo();
   static const String title = 'GoRouter Example: Named Routes';
@@ -37,7 +37,7 @@ class App extends StatelessWidget {
     routes: $appRoutes,
 
     // redirect to the login page if the user is not logged in
-    redirect: (GoRouterState state) {
+    redirect: (BuildContext context, GoRouterState state) {
       final bool loggedIn = loginInfo.loggedIn;
 
       // check just the subloc in case there are query parameters
@@ -83,7 +83,7 @@ class HomeRoute extends GoRouteData {
   const HomeRoute();
 
   @override
-  Widget build(BuildContext context) => const HomeScreen();
+  Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
 
 @TypedGoRoute<LoginRoute>(
@@ -95,7 +95,8 @@ class LoginRoute extends GoRouteData {
   final String? fromPage;
 
   @override
-  Widget build(BuildContext context) => LoginScreen(from: fromPage);
+  Widget build(BuildContext context, GoRouterState state) =>
+      LoginScreen(from: fromPage);
 }
 
 class FamilyRoute extends GoRouteData {
@@ -104,7 +105,8 @@ class FamilyRoute extends GoRouteData {
   final String fid;
 
   @override
-  Widget build(BuildContext context) => FamilyScreen(family: familyById(fid));
+  Widget build(BuildContext context, GoRouterState state) =>
+      FamilyScreen(family: familyById(fid));
 }
 
 class PersonRoute extends GoRouteData {
@@ -114,7 +116,7 @@ class PersonRoute extends GoRouteData {
   final int pid;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, GoRouterState state) {
     final Family family = familyById(fid);
     final Person person = family.person(pid);
     return PersonScreen(family: family, person: person);
@@ -130,13 +132,13 @@ class PersonDetailsRoute extends GoRouteData {
   final int? $extra;
 
   @override
-  // ignore: deprecated_member_use_from_same_package
-  Page<void> buildPage(BuildContext context) {
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
     final Family family = familyById(fid);
     final Person person = family.person(pid);
 
     return MaterialPage<Object>(
       fullscreenDialog: true,
+      key: state.pageKey,
       child: PersonDetailsPage(
         family: family,
         person: person,
@@ -148,7 +150,7 @@ class PersonDetailsRoute extends GoRouteData {
 }
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +186,7 @@ class HomeScreen extends StatelessWidget {
 }
 
 class FamilyScreen extends StatelessWidget {
-  const FamilyScreen({required this.family, Key? key}) : super(key: key);
+  const FamilyScreen({required this.family, super.key});
   final Family family;
 
   @override
@@ -203,8 +205,7 @@ class FamilyScreen extends StatelessWidget {
 }
 
 class PersonScreen extends StatelessWidget {
-  const PersonScreen({required this.family, required this.person, Key? key})
-      : super(key: key);
+  const PersonScreen({required this.family, required this.person, super.key});
 
   final Family family;
   final Person person;
@@ -224,8 +225,7 @@ class PersonScreen extends StatelessWidget {
                 in person.details.entries)
               ListTile(
                 title: Text(
-                  // TODO(kevmoo): replace `split` with `name` when min SDK is 2.15
-                  '${entry.key.toString().split('.').last} - ${entry.value}',
+                  '${entry.key.name} - ${entry.value}',
                 ),
                 trailing: OutlinedButton(
                   onPressed: () => PersonDetailsRoute(
@@ -250,8 +250,8 @@ class PersonDetailsPage extends StatelessWidget {
     required this.person,
     required this.detailsKey,
     this.extra,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final Family family;
   final Person person;
@@ -278,7 +278,7 @@ class PersonDetailsPage extends StatelessWidget {
 }
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({this.from, Key? key}) : super(key: key);
+  const LoginScreen({this.from, super.key});
   final String? from;
 
   @override

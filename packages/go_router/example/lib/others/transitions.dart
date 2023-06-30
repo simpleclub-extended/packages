@@ -10,16 +10,14 @@ void main() => runApp(App());
 /// The main app.
 class App extends StatelessWidget {
   /// Creates an [App].
-  App({Key? key}) : super(key: key);
+  App({super.key});
 
   /// The title of the app.
   static const String title = 'GoRouter Example: Custom Transitions';
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        routeInformationProvider: _router.routeInformationProvider,
-        routeInformationParser: _router.routeInformationParser,
-        routerDelegate: _router.routerDelegate,
+        routerConfig: _router,
         title: title,
       );
 
@@ -27,7 +25,7 @@ class App extends StatelessWidget {
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        redirect: (_) => '/none',
+        redirect: (_, __) => '/none',
       ),
       GoRoute(
         path: '/fade',
@@ -122,8 +120,8 @@ class ExampleTransitionsScreen extends StatelessWidget {
   const ExampleTransitionsScreen({
     required this.color,
     required this.kind,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// The available transition kinds.
   static final List<String> kinds = <String>[

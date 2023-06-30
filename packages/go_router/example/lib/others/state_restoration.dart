@@ -12,7 +12,7 @@ void main() => runApp(
 /// The main app.
 class App extends StatefulWidget {
   /// Creates an [App].
-  const App({Key? key}) : super(key: key);
+  const App({super.key});
 
   /// The title of the app.
   static const String title = 'GoRouter Example: State Restoration';
@@ -27,14 +27,12 @@ class _AppState extends State<App> with RestorationMixin {
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-    // todo: implement restoreState for you app
+    // Implement restoreState for your app
   }
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        routeInformationProvider: _router.routeInformationProvider,
-        routeInformationParser: _router.routeInformationParser,
-        routerDelegate: _router.routerDelegate,
+        routerConfig: _router,
         title: App.title,
         restorationScopeId: 'app',
       );
@@ -62,7 +60,7 @@ class _AppState extends State<App> with RestorationMixin {
 /// The screen of the first page.
 class Page1Screen extends StatelessWidget {
   /// Creates a [Page1Screen].
-  const Page1Screen({Key? key}) : super(key: key);
+  const Page1Screen({super.key});
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -84,7 +82,7 @@ class Page1Screen extends StatelessWidget {
 /// The screen of the second page.
 class Page2Screen extends StatelessWidget {
   /// Creates a [Page2Screen].
-  const Page2Screen({Key? key}) : super(key: key);
+  const Page2Screen({super.key});
 
   @override
   Widget build(BuildContext context) => Scaffold(

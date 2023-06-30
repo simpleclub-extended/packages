@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
-import '../shared/dropdown_menu.dart';
+import '../shared/dropdown_menu.dart' as dropdown;
 import '../shared/markdown_demo_widget.dart';
 import '../shared/markdown_extensions.dart';
 
@@ -31,7 +31,7 @@ spacing parameter sets the height of the **SizedBox**.
 // TODO(goderbauer): Restructure the examples to avoid this ignore, https://github.com/flutter/flutter/issues/110208.
 // ignore: avoid_implementing_value_types
 class WrapAlignmentDemo extends StatefulWidget implements MarkdownDemoWidget {
-  const WrapAlignmentDemo({Key? key}) : super(key: key);
+  const WrapAlignmentDemo({super.key});
 
   static const String _title = 'Wrap Alignment Demo';
 
@@ -79,7 +79,7 @@ class _WrapAlignmentDemoState extends State<WrapAlignmentDemo> {
         if (snapshot.connectionState == ConnectionState.done) {
           return Column(
             children: <Widget>[
-              DropdownMenu<WrapAlignment>(
+              dropdown.DropdownMenu<WrapAlignment>(
                 items: _wrapAlignmentMenuItems,
                 label: 'Wrap Alignment:',
                 initialValue: _wrapAlignment,
@@ -91,7 +91,7 @@ class _WrapAlignmentDemoState extends State<WrapAlignmentDemo> {
                   }
                 },
               ),
-              DropdownMenu<double>(
+              dropdown.DropdownMenu<double>(
                 items: _blockSpacingMenuItems,
                 label: 'Block Spacing:',
                 initialValue: _blockSpacing,

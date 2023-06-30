@@ -5,16 +5,11 @@
 // ignore_for_file: cascade_invocations, diagnostic_describe_all_properties
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/diagnostics.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:go_router/src/match.dart';
-import 'package:go_router/src/typedefs.dart';
 
-Future<GoRouter> createGoRouter(
-  WidgetTester tester, {
-  GoRouterNavigatorBuilder? navigatorBuilder,
-}) async {
+Future<GoRouter> createGoRouter(WidgetTester tester) async {
   final GoRouter goRouter = GoRouter(
     initialLocation: '/',
     routes: <GoRoute>[
@@ -24,12 +19,10 @@ Future<GoRouter> createGoRouter(
         builder: (_, __) => TestErrorScreen(TestFailure('Exception')),
       ),
     ],
-    navigatorBuilder: navigatorBuilder,
   );
   await tester.pumpWidget(MaterialApp.router(
-      routeInformationProvider: goRouter.routeInformationProvider,
-      routeInformationParser: goRouter.routeInformationParser,
-      routerDelegate: goRouter.routerDelegate));
+    routerConfig: goRouter,
+  ));
   return goRouter;
 }
 
@@ -134,47 +127,37 @@ class GoRouterPopSpy extends GoRouter {
   GoRouterPopSpy({required super.routes});
 
   bool popped = false;
+  Object? poppedResult;
 
   @override
-  void pop() {
+  void pop<T extends Object?>([T? result]) {
     popped = true;
-  }
-}
-
-class GoRouterRefreshStreamSpy extends GoRouterRefreshStream {
-  GoRouterRefreshStreamSpy(
-    super.stream,
-  ) : notifyCount = 0;
-
-  late int notifyCount;
-
-  @override
-  void notifyListeners() {
-    notifyCount++;
-    super.notifyListeners();
+    poppedResult = result;
   }
 }
 
 Future<GoRouter> createRouter(
-  List<GoRoute> routes,
+  List<RouteBase> routes,
   WidgetTester tester, {
   GoRouterRedirect? redirect,
   String initialLocation = '/',
   int redirectLimit = 5,
+  GlobalKey<NavigatorState>? navigatorKey,
+  GoRouterWidgetBuilder? errorBuilder,
 }) async {
   final GoRouter goRouter = GoRouter(
     routes: routes,
     redirect: redirect,
     initialLocation: initialLocation,
     redirectLimit: redirectLimit,
-    errorBuilder: (BuildContext context, GoRouterState state) =>
-        TestErrorScreen(state.error!),
+    errorBuilder: errorBuilder ??
+        (BuildContext context, GoRouterState state) =>
+            TestErrorScreen(state.error!),
+    navigatorKey: navigatorKey,
   );
   await tester.pumpWidget(
     MaterialApp.router(
-      routeInformationProvider: goRouter.routeInformationProvider,
-      routeInformationParser: goRouter.routeInformationParser,
-      routerDelegate: goRouter.routerDelegate,
+      routerConfig: goRouter,
     ),
   );
   return goRouter;
@@ -182,6 +165,7 @@ Future<GoRouter> createRouter(
 
 class TestErrorScreen extends DummyScreen {
   const TestErrorScreen(this.ex, {super.key});
+
   final Exception ex;
 }
 
@@ -203,16 +187,19 @@ class LoginScreen extends DummyScreen {
 
 class FamilyScreen extends DummyScreen {
   const FamilyScreen(this.fid, {super.key});
+
   final String fid;
 }
 
 class FamiliesScreen extends DummyScreen {
   const FamiliesScreen({required this.selectedFid, super.key});
+
   final String selectedFid;
 }
 
 class PersonScreen extends DummyScreen {
   const PersonScreen(this.fid, this.pid, {super.key});
+
   final String fid;
   final String pid;
 }
@@ -231,109 +218,7 @@ class DummyScreen extends StatelessWidget {
 
 Widget dummy(BuildContext context, GoRouterState state) => const DummyScreen();
 
-extension Extension on GoRouter {
-  Page<dynamic> _pageFor(RouteMatch match) {
-    final List<RouteMatch> matches = routerDelegate.matches.matches;
-    final int i = matches.indexOf(match);
-    final List<Page<dynamic>> pages =
-        routerDelegate.builder.getPages(DummyBuildContext(), matches).toList();
-    return pages[i];
-  }
-
-  Widget screenFor(RouteMatch match) =>
-      (_pageFor(match) as MaterialPage<void>).child;
-}
-
-class DummyBuildContext implements BuildContext {
-  @override
-  bool get debugDoingBuild => throw UnimplementedError();
-
-  @override
-  InheritedWidget dependOnInheritedElement(InheritedElement ancestor,
-      {Object aspect = 1}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  T? dependOnInheritedWidgetOfExactType<T extends InheritedWidget>(
-      {Object? aspect}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  DiagnosticsNode describeElement(String name,
-      {DiagnosticsTreeStyle style = DiagnosticsTreeStyle.errorProperty}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  List<DiagnosticsNode> describeMissingAncestor(
-      {required Type expectedAncestorType}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  DiagnosticsNode describeOwnershipChain(String name) {
-    throw UnimplementedError();
-  }
-
-  @override
-  DiagnosticsNode describeWidget(String name,
-      {DiagnosticsTreeStyle style = DiagnosticsTreeStyle.errorProperty}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  void dispatchNotification(Notification notification) {
-    throw UnimplementedError();
-  }
-
-  @override
-  T? findAncestorRenderObjectOfType<T extends RenderObject>() {
-    throw UnimplementedError();
-  }
-
-  @override
-  T? findAncestorStateOfType<T extends State<StatefulWidget>>() {
-    throw UnimplementedError();
-  }
-
-  @override
-  T? findAncestorWidgetOfExactType<T extends Widget>() {
-    throw UnimplementedError();
-  }
-
-  @override
-  RenderObject? findRenderObject() {
-    throw UnimplementedError();
-  }
-
-  @override
-  T? findRootAncestorStateOfType<T extends State<StatefulWidget>>() {
-    throw UnimplementedError();
-  }
-
-  @override
-  InheritedElement?
-      getElementForInheritedWidgetOfExactType<T extends InheritedWidget>() {
-    throw UnimplementedError();
-  }
-
-  @override
-  BuildOwner? get owner => throw UnimplementedError();
-
-  @override
-  Size? get size => throw UnimplementedError();
-
-  @override
-  void visitAncestorElements(bool Function(Element element) visitor) {}
-
-  @override
-  void visitChildElements(ElementVisitor visitor) {}
-
-  @override
-  Widget get widget => throw UnimplementedError();
-}
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class DummyStatefulWidget extends StatefulWidget {
   const DummyStatefulWidget({super.key});
@@ -345,4 +230,11 @@ class DummyStatefulWidget extends StatefulWidget {
 class DummyStatefulWidgetState extends State<DummyStatefulWidget> {
   @override
   Widget build(BuildContext context) => Container();
+}
+
+Future<void> simulateAndroidBackButton(WidgetTester tester) async {
+  final ByteData message =
+      const JSONMethodCodec().encodeMethodCall(const MethodCall('popRoute'));
+  await tester.binding.defaultBinaryMessenger
+      .handlePlatformMessage('flutter/navigation', message, (_) {});
 }
