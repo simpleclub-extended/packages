@@ -169,6 +169,7 @@ abstract class MarkdownWidget extends StatefulWidget {
   const MarkdownWidget({
     super.key,
     required this.data,
+    @Deprecated('To make markdown text selectable wrap it in SelectionArea')
     this.selectable = false,
     this.styleSheet,
     this.styleSheetTheme = MarkdownStyleSheetBaseTheme.material,
@@ -196,6 +197,7 @@ abstract class MarkdownWidget extends StatefulWidget {
   /// If true, the text is selectable.
   ///
   /// Defaults to false.
+  @Deprecated('To make markdown text selectable wrap it in SelectionArea')
   final bool selectable;
 
   /// The styles to use when displaying the Markdown.
